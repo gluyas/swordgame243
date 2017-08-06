@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour {
+public class Player : MonoBehaviour
+{
+	private Character _char; 
 
-	// Use this for initialization
-	void Start () {
-		
+	private void Start()
+	{
+		_char = GetComponent<Character>();
 	}
 	
-	// Update is called once per frame
-	void Update () {
+	private void Update()
+	{
+		_char.SetMovement(new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")));
 		
 	}
 }
