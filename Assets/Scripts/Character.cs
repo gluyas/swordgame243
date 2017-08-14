@@ -9,8 +9,10 @@ using UnityEngine;
 public class Character : MonoBehaviour
 {
 	public float MovementSpeed;
-	
+	public int MaxHp;
+
 	public Vector3 Velocity { get; private set; }
+	public int Hp { get; private set; }
 
 	/// <summary>
 	/// Set the Character's horizontal movement
@@ -35,6 +37,15 @@ public class Character : MonoBehaviour
 	public void AddMovement(Vector2 delta, bool truncate = true)
 	{
 		SetMovement(new Vector2(Velocity.x + delta.x, Velocity.z + delta.y), truncate);	
+	}
+
+	public void Damage(int damage)
+	{
+		Hp -= damage;
+		if (Hp <= 0)
+		{
+			Destroy(this.gameObject);
+		}
 	}
 	
 	private void Update()
