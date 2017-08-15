@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
 	
 	public float FireRate;
 	public float FireBurstSize;
+	public AnimationCurve FireStrengthCurve = AnimationCurve.Linear(0, 0, 1, 1);
 	
 	public float SpreadBase;
 	public float SpreadIncreaseFactor;
@@ -54,7 +55,7 @@ public class Player : MonoBehaviour
 		// SHOOTING
 		{	
 			var aim = new Vector2(Input.GetAxis("AimX"), Input.GetAxis("AimY"));
-			var aim3d = new Vector3(aim.x, 0, aim.y).normalized;
+			var aim3 = new Vector3(aim.x, 0, aim.y).normalized;
 
 			if (Input.GetButton("FireBurst"))
 			{
@@ -64,7 +65,8 @@ public class Player : MonoBehaviour
 			else
 			{
 				_burstFired = false;
-				_shotCarryOver += FireRate * Input.GetAxis("FireStrength") * Time.deltaTime;
+				Debug.Log(Input.GetAxis("FireStrength"));
+				_shotCarryOver += FireRate * FireStrengthCurve.Evaluate(Input.GetAxis("FireStrength")) * Time.deltaTime;
 				if (_shotCarryOver > _ammo) _shotCarryOver = _ammo;
 			}
 			
@@ -77,7 +79,7 @@ public class Player : MonoBehaviour
 			for (var i = 0; i < shots; i++)
 			{
 				var bullet = Instantiate(Bullet).GetComponent<Bullet>();
-				var aimSpread = Quaternion.AngleAxis(Random.Range(-spread, spread), Vector3.up) * aim3d;
+				var aimSpread = Quaternion.AngleAxis(Random.Range(-spread, spread), Vector3.up) * aim3;
 				var posJitter = transform.position + aimSpread * Random.Range(MuzzleLength, jitter);
 				bullet.Init(posJitter, aimSpread);
 	
