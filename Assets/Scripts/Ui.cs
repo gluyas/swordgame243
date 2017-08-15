@@ -5,13 +5,15 @@ using UnityEngine.UI;
 
 public class Ui : MonoBehaviour
 {
-	public Text AmmoCount;
+	public Image AmmoBar;
 
 	public Player Player;
 	
 	// Update is called once per frame
 	void Update ()
 	{
-		AmmoCount.text = Player.Ammo.ToString();
+		var ammo = Player.AmmoRaw / Player.AmmoMax;
+		AmmoBar.rectTransform.localScale = new Vector3(ammo, 1, 1);
+		AmmoBar.color = Color.Lerp(Color.red, Color.white, ammo / Player.AmmoRegenMaxPoint);
 	}
 }

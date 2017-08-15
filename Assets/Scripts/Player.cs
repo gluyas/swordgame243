@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
 	public float MuzzleLength;
 	public float AimDeadZone = 0.1f;
 	
-	public float FireRate;
+	public float FireRateMean;
 	public float FireBurstSize;
 	public AnimationCurve FireStrengthCurve = AnimationCurve.Linear(0, 0, 1, 1);
 	
@@ -31,17 +31,19 @@ public class Player : MonoBehaviour
 	
 	public int Ammo
 	{
-		get { return Mathf.FloorToInt(_ammo); }
+		get { return Mathf.FloorToInt(AmmoRaw); }
 	}
+	public float AmmoRaw { get; private set; }
+	
+	public float FireRate { get; private set; }
 
-	private float _ammo;
 	private float _shotCarryOver;
 	private bool _burstFired = false;
 
 	private void Start()
 	{
 		_char = GetComponent<Character>();
-		_ammo = AmmoMax;
+		AmmoRaw = AmmoMax;
 	}
 	
 	private void Update()
@@ -51,9 +53,9 @@ public class Player : MonoBehaviour
 		
 		// AMMO REGEN
 		{
-			var regenRate = Mathf.Clamp(_ammo / AmmoMax / AmmoRegenMaxPoint, 0, 1);
-			_ammo += Mathf.Lerp(AmmoRegenMin, AmmoRegenMax, regenRate) * Time.deltaTime;
-			if (_ammo >= AmmoMax) _ammo = AmmoMax;
+			var regenRate = Mathf.Clamp(AmmoRaw / AmmoMax / AmmoRegenMaxPoint, 0, 1);
+			AmmoRaw += Mathf.Lerp(AmmoRegenMin, AmmoRegenMax, regenRate) * Time.deltaTime;
+			if (AmmoRaw >= AmmoMax) AmmoRaw = AmmoMax;
 		}
 		
 		// SHOOTING
@@ -61,25 +63,24 @@ public class Player : MonoBehaviour
 			var aim = new Vector2(Input.GetAxis("AimX"), Input.GetAxis("AimY"));
 			if (Math.Abs(aim.magnitude) > AimDeadZone)	// set aim direction
 			{
-				_char.Facing = new Vector3(aim.x, 0, aim.y).normalized;;
+				_char.Facing = new Vector3(aim.x, 0, aim.y).normalized;
 			}
 			
 			if (Input.GetButton("FireBurst"))
 			{
-				if (!_burstFired) _shotCarryOver = _ammo * FireBurstSize;		// fire everything
+				if (!_burstFired) _shotCarryOver = AmmoRaw * FireBurstSize;		// fire everything
 				_burstFired = true;
 			}
 			else
 			{
 				_burstFired = false;
-				Debug.Log(Input.GetAxis("FireStrength"));
-				_shotCarryOver += FireRate * Time.deltaTime *
+				_shotCarryOver += FireRateMean * Time.deltaTime *
 				                  FireStrengthCurve.Evaluate(Input.GetAxis("FireStrength"));
-				if (_shotCarryOver > _ammo) _shotCarryOver = _ammo;
+				if (_shotCarryOver > AmmoRaw) _shotCarryOver = AmmoRaw;
 			}
 			
 			var shots = Mathf.FloorToInt(_shotCarryOver);
-			_ammo -= shots;
+			AmmoRaw -= shots;
 			_shotCarryOver -= shots;	// carry unfired 'half-shots' over between frames
 
 			var spread = SpreadBase;
