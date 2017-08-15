@@ -81,7 +81,7 @@ public class Player : MonoBehaviour
 				var bullet = Instantiate(Bullet).GetComponent<Bullet>();
 				var aimSpread = Quaternion.AngleAxis(Random.Range(-spread, spread), Vector3.up) * aim3;
 				var posJitter = transform.position + aimSpread * Random.Range(MuzzleLength, jitter);
-				bullet.Init(posJitter, aimSpread);
+				bullet.Init(posJitter, aimSpread, _char);
 	
 				spread += SpreadBase * SpreadIncreaseFactor;
 				jitter += JitterBase * JitterIncreaseFactor;

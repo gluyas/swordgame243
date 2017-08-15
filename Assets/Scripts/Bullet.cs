@@ -6,15 +6,26 @@ public class Bullet : MonoBehaviour
 {
 	public float Speed;
 	public float LifeTime;
+
+	public bool InheritVelocity = true;
 	
 	private Vector3 _velocity;
 	private float _time;
+
+	private Character _owner;
 	
-	public void Init(Vector3 position, Vector3 direction)
+	public void Init(Vector3 position, Vector3 direction, Character owner = null)
 	{
 		_velocity = direction;
 		_velocity.Normalize();
 		_velocity *= Speed;
+
+		if (owner != null)
+		{
+			_owner = owner;
+			if (InheritVelocity) _velocity += owner.Velocity;
+		}	
+		
 		transform.position = position;
 		transform.rotation *= Quaternion.FromToRotation(Vector3.forward, _velocity);
 	}
