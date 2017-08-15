@@ -14,6 +14,18 @@ public class Character : MonoBehaviour
 	public Vector3 Velocity { get; private set; }
 	public int Hp { get; private set; }
 
+	private Vector3 _facing = Vector3.forward;
+
+	public Vector3 Facing
+	{
+		get { return _facing; }
+		set
+		{
+			_facing = value.normalized;
+			transform.rotation = Quaternion.FromToRotation(Vector3.forward, _facing);
+		}
+	}
+
 	/// <summary>
 	/// Set the Character's horizontal movement
 	/// </summary>

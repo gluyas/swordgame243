@@ -1,7 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using NUnit.Framework.Constraints;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Player : MonoBehaviour
 {
@@ -10,6 +13,7 @@ public class Player : MonoBehaviour
 	public GameObject Bullet;
 
 	public float MuzzleLength;
+	public float AimDeadZone = 0.1f;
 	
 	public float FireRate;
 	public float FireBurstSize;
@@ -55,8 +59,11 @@ public class Player : MonoBehaviour
 		// SHOOTING
 		{	
 			var aim = new Vector2(Input.GetAxis("AimX"), Input.GetAxis("AimY"));
-			var aim3 = new Vector3(aim.x, 0, aim.y).normalized;
-
+			if (Math.Abs(aim.magnitude) > AimDeadZone)	// set aim direction
+			{
+				_char.Facing = new Vector3(aim.x, 0, aim.y).normalized;;
+			}
+			
 			if (Input.GetButton("FireBurst"))
 			{
 				if (!_burstFired) _shotCarryOver = _ammo * FireBurstSize;		// fire everything
@@ -66,7 +73,8 @@ public class Player : MonoBehaviour
 			{
 				_burstFired = false;
 				Debug.Log(Input.GetAxis("FireStrength"));
-				_shotCarryOver += FireRate * FireStrengthCurve.Evaluate(Input.GetAxis("FireStrength")) * Time.deltaTime;
+				_shotCarryOver += FireRate * Time.deltaTime *
+				                  FireStrengthCurve.Evaluate(Input.GetAxis("FireStrength"));
 				if (_shotCarryOver > _ammo) _shotCarryOver = _ammo;
 			}
 			
@@ -79,7 +87,7 @@ public class Player : MonoBehaviour
 			for (var i = 0; i < shots; i++)
 			{
 				var bullet = Instantiate(Bullet).GetComponent<Bullet>();
-				var aimSpread = Quaternion.AngleAxis(Random.Range(-spread, spread), Vector3.up) * aim3;
+				var aimSpread = Quaternion.AngleAxis(Random.Range(-spread, spread), Vector3.up) * _char.Facing;
 				var posJitter = transform.position + aimSpread * Random.Range(MuzzleLength, jitter);
 				bullet.Init(posJitter, aimSpread, _char);
 	
