@@ -32,9 +32,10 @@ public class Swarmer : MonoBehaviour
 	
 	private Character _char;
 	
-	private void OnEnable ()
+	private void OnEnable()
 	{
 		_char = GetComponent<Character>();
+		_char.OnDeath.AddListener(() => Destroy(gameObject));
 		All.Add(this);
 	}
 	

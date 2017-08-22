@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 /// <summary>
 /// Component for objects to move around within the world
@@ -8,6 +9,8 @@ using UnityEngine;
 /// </summary>
 public class Character : MonoBehaviour
 {
+	public readonly UnityEvent OnDeath = new UnityEvent();
+	
 	public float MovementSpeed;
 	public int MaxHp;
 
@@ -61,7 +64,7 @@ public class Character : MonoBehaviour
 		Hp -= damage;
 		if (Hp <= 0)
 		{
-			Destroy(this.gameObject);
+			OnDeath.Invoke();
 		}
 	}
 	
