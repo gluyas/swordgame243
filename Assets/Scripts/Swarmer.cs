@@ -68,9 +68,9 @@ public class Swarmer : MonoBehaviour
 					avoidance -= toOther * Mathf.Pow(1 - distance / AvoidanceRadius, AvoidanceExponent);
 					
 					avoidanceCount += 1; 
-					Debug.DrawLine(this.transform.position, other.transform.position, Color.red, 0, false);	
+					//Debug.DrawLine(this.transform.position, other.transform.position, Color.red, 0, false);	
 				}
-				else Debug.DrawLine(this.transform.position, other.transform.position, Color.green);
+				//else Debug.DrawLine(this.transform.position, other.transform.position, Color.green);
 			}
 		}
 
@@ -86,7 +86,7 @@ public class Swarmer : MonoBehaviour
 				toBullet.Normalize();
 				evasion -= toBullet * Mathf.Pow(1 - distance / EvasionRadius, EvasionExponent) * 20;
 				evasionCount += 1;
-				Debug.DrawLine(this.transform.position, bullet.transform.position, Color.blue, 0, false);	
+				//Debug.DrawLine(this.transform.position, bullet.transform.position, Color.blue, 0, false);	
 			}
 		}
 		

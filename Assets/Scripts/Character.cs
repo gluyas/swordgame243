@@ -16,6 +16,11 @@ public class Character : MonoBehaviour
 
 	private Vector3 _facing = Vector3.forward;
 
+	private void Start()
+	{
+		Hp = MaxHp;
+	}
+
 	public Vector3 Facing
 	{
 		get { return _facing; }
