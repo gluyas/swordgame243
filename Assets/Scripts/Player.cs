@@ -14,6 +14,10 @@ public class Player : MonoBehaviour
 
 	public GameObject Bullet;
 
+	public AudioSource SoundRapid;
+	public AudioSource SoundBurst;
+	public AudioSource SoundDamage;
+
 	public float MuzzleLength;
 	public float AimDeadZone = 0.1f;
 	
@@ -30,11 +34,17 @@ public class Player : MonoBehaviour
 	public float AmmoRegenMax;
 	public float AmmoRegenMin;
 	public float AmmoRegenMaxPoint;
+
+	public int Hp
+	{
+		get { return _char.Hp; }
+	}
 	
 	public int Ammo
 	{
 		get { return Mathf.FloorToInt(AmmoRaw); }
 	}
+	
 	public float AmmoRaw { get; private set; }
 	
 	public float FireRate { get; private set; }
@@ -72,7 +82,11 @@ public class Player : MonoBehaviour
 			
 			if (Input.GetButton("FireBurst"))
 			{
-				if (!_burstFired) _shotCarryOver = AmmoRaw * FireBurstSize;		// fire everything
+				if (!_burstFired)
+				{
+					_shotCarryOver = AmmoRaw * FireBurstSize; // fire everything
+					SoundBurst.Play();
+				}
 				_burstFired = true;
 			}
 			else
@@ -89,6 +103,7 @@ public class Player : MonoBehaviour
 
 			var spread = SpreadBase;
 			var jitter = JitterBase;
+			
 			for (var i = 0; i < shots; i++)
 			{
 				var bullet = Instantiate(Bullet).GetComponent<Bullet>();
@@ -98,6 +113,8 @@ public class Player : MonoBehaviour
 	
 				spread += SpreadBase * SpreadIncreaseFactor;
 				jitter += JitterBase * JitterIncreaseFactor;
+				
+				if (!_burstFired) SoundRapid.Play();
 			}
 		}
 	}
