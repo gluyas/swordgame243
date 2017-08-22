@@ -31,14 +31,14 @@ public class Character : MonoBehaviour
 	/// </summary>
 	/// <param name="movement">Vector to move in, as a coefficient of the Character's movement speed</param>
 	/// <param name="truncate">If true, then the new speed will not exceed MovemenSpeed</param>
-	public void SetMovement(Vector2 movement, bool truncate = true)
+	public void SetMovement(Vector3 movement, bool truncate = true)
 	{
 		if (truncate && movement.magnitude > 1)
 		{
 			movement.Normalize();
 		}
 		movement *= MovementSpeed;
-		Velocity = new Vector3(movement.x, Velocity.y, movement.y);
+		Velocity = movement;
 	}
 	
 	/// <summary>
@@ -46,9 +46,9 @@ public class Character : MonoBehaviour
 	/// </summary>
 	/// <param name="delta">Vector to adjust movment in, as a coefficient of the Character's movement speed</param>
 	/// <param name="truncate">If true, then the new speed will not exceed MovemenSpeed</param>
-	public void AddMovement(Vector2 delta, bool truncate = true)
+	public void AddMovement(Vector3 delta, bool truncate = true)
 	{
-		SetMovement(new Vector2(Velocity.x + delta.x, Velocity.z + delta.y), truncate);	
+		SetMovement(Velocity + delta, truncate);	
 	}
 
 	public void Damage(int damage)

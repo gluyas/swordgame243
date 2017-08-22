@@ -8,6 +8,8 @@ using Random = UnityEngine.Random;
 
 public class Player : MonoBehaviour
 {
+	public static Player Instance { get; private set; }
+	
 	private Character _char;
 
 	public GameObject Bullet;
@@ -42,6 +44,7 @@ public class Player : MonoBehaviour
 
 	private void Start()
 	{
+		Instance = this;
 		_char = GetComponent<Character>();
 		AmmoRaw = AmmoMax;
 	}
@@ -49,7 +52,7 @@ public class Player : MonoBehaviour
 	private void Update()
 	{
 		// MOVEMENT
-		_char.SetMovement(new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")));
+		_char.SetMovement(new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")));
 		
 		// AMMO REGEN
 		{
