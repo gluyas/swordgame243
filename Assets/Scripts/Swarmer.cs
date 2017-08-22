@@ -5,29 +5,37 @@ using UnityEngine;
 
 public class Swarmer : MonoBehaviour
 {
+	public static readonly HashSet<Swarmer> All = new HashSet<Swarmer>();
+	
 	// AI property weighting
 	public float Acceleration = 1f;
 	public float SwarmRadius;
 	
 	public float AvoidanceRadius;
-	
 	public float AvoidanceExponent;
 	public float AvoidanceWeight = 1f;
+
+	public float EvasionRadius;
+	public float EvasionExponent;
+	public float EvasionWeight = 1f;
 	
 	public float AlignmentWeight = 1f;
-	public float CohesionWeight = 1f;
-	public float PursuitWeight = 1f;
 	
-	public float TotalWeight { get { return AlignmentWeight + CohesionWeight + AvoidanceWeight + PursuitWeight; } }
+	public float CohesionWeight = 1f;
+	
+	public float PursuitWeight = 1f;
 
-	private static readonly HashSet<Swarmer> AllSwarmers = new HashSet<Swarmer>();
+	public float TotalWeight
+	{
+		get { return AlignmentWeight + CohesionWeight + AvoidanceWeight + PursuitWeight + EvasionWeight; }
+	}
 	
 	private Character _char;
 	
 	private void OnEnable ()
 	{
 		_char = GetComponent<Character>();
-		AllSwarmers.Add(this);
+		All.Add(this);
 	}
 	
 	// Update is called once per frame
@@ -40,7 +48,7 @@ public class Swarmer : MonoBehaviour
 		var avoidance = Vector3.zero;
 		var avoidanceCount = 0;
 		
-		foreach (var other in AllSwarmers)
+		foreach (var other in All)
 		{
 			if (other == this) continue;
 
@@ -65,6 +73,22 @@ public class Swarmer : MonoBehaviour
 				else Debug.DrawLine(this.transform.position, other.transform.position, Color.green);
 			}
 		}
+
+		var evasion = Vector3.zero;
+		var evasionCount = 0;
+
+		foreach (var bullet in Bullet.All)
+		{
+			var toBullet = bullet.transform.position - this.transform.position;
+			var distance = toBullet.magnitude;
+			if (distance < EvasionRadius)
+			{
+				toBullet.Normalize();
+				evasion -= toBullet * Mathf.Pow(1 - distance / EvasionRadius, EvasionExponent) * 20;
+				evasionCount += 1;
+				Debug.DrawLine(this.transform.position, bullet.transform.position, Color.blue, 0, false);	
+			}
+		}
 		
 		// all metrics are mapped to the range [0, 1], to simplify tweaking by the designer
 		
@@ -79,7 +103,10 @@ public class Swarmer : MonoBehaviour
 		if (alignment.magnitude > 1) alignment.Normalize();            
 
 		// AVOIDANCE
-		avoidance /= avoidanceCount;
+		if (avoidanceCount > 0) avoidance /= avoidanceCount;
+		
+		// EVASION
+		if (evasionCount > 0) evasion /= evasionCount;
 		
 		// PURSUIT
 		var pursuit = Player.Instance.transform.position - this.transform.position;
@@ -91,20 +118,16 @@ public class Swarmer : MonoBehaviour
 			alignment = Vector3.zero;
 			cohesion = Vector3.zero;
 		}
-		if (avoidanceCount == 0)
-		{
-			avoidance = Vector3.zero;
-		}
 			
 		// FINAL CALCULATION
 		var result = CohesionWeight * cohesion + AlignmentWeight * alignment + AvoidanceWeight * avoidance +
-		             PursuitWeight * pursuit;
-		result *= Acceleration / TotalWeight;	// map the result from [0 - TotalWegiht] -> [0 - Acceleration]
+		             PursuitWeight * pursuit + EvasionWeight * evasion;
+		result *= Acceleration / TotalWeight;	// map the range [0, TotalWegiht] -> [0, Acceleration]
 		_char.AddMovement(result);
 	}
 
 	private void OnDestroy()
 	{
-		AllSwarmers.Remove(this);
+		All.Remove(this);
 	}
 }

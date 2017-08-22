@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+	public static readonly HashSet<Bullet> All = new HashSet<Bullet>();
+	
 	public float Speed;
 	public float LifeTime;
 
@@ -28,6 +30,8 @@ public class Bullet : MonoBehaviour
 		
 		transform.position = position;
 		transform.rotation *= Quaternion.FromToRotation(Vector3.forward, _velocity);
+
+		All.Add(this);
 	}
 
 	private void Update()
@@ -45,5 +49,10 @@ public class Bullet : MonoBehaviour
 			target.Damage(1);
 			Destroy(this.gameObject);
 		}
+	}
+	
+	private void OnDestroy()
+	{
+		All.Remove(this);
 	}
 }
