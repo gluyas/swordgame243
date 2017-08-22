@@ -40,16 +40,6 @@ public class Bullet : MonoBehaviour
 		_time += Time.deltaTime;
 		if (_time >= LifeTime) Destroy(this.gameObject);
 	}
-
-	private void OnTriggerEnter(Collider other)
-	{
-		var target = other.gameObject.GetComponent<Character>();
-		if (target != null)
-		{
-			target.Damage(1);
-			Destroy(this.gameObject);
-		}
-	}
 	
 	private void OnDestroy()
 	{

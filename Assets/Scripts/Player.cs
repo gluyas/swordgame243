@@ -100,4 +100,9 @@ public class Player : MonoBehaviour
 			}
 		}
 	}
+
+	private void OnDestroy()
+	{
+		Instance = null;
+	}
 }
