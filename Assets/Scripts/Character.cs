@@ -10,6 +10,7 @@ using UnityEngine.Events;
 public class Character : MonoBehaviour
 {
 	public readonly UnityEvent OnDeath = new UnityEvent();
+	public readonly UnityEvent OnDamage = new UnityEvent();
 	
 	public float MovementSpeed;
 	public int MaxHp;
@@ -62,6 +63,7 @@ public class Character : MonoBehaviour
 	public void Damage(int damage)
 	{
 		Hp -= damage;
+		OnDamage.Invoke();
 		if (Hp <= 0)
 		{
 			OnDeath.Invoke();

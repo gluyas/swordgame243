@@ -57,6 +57,7 @@ public class Player : MonoBehaviour
 		Instance = this;
 		_char = GetComponent<Character>();
 		_char.OnDeath.AddListener(() => this.gameObject.SetActive(false));
+		_char.OnDamage.AddListener(() => SoundDamage.Play());
 		AmmoRaw = AmmoMax;
 	}
 	

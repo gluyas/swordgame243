@@ -123,7 +123,7 @@ public class Swarmer : MonoBehaviour
 		// FINAL CALCULATION
 		var result = CohesionWeight * cohesion + AlignmentWeight * alignment + AvoidanceWeight * avoidance +
 		             PursuitWeight * pursuit + EvasionWeight * evasion;
-		result *= Acceleration / TotalWeight;	// map the range [0, TotalWegiht] -> [0, Acceleration]
+		result *= Acceleration / TotalWeight * Time.deltaTime;	// map the range [0, TotalWegiht] -> [0, Acceleration]
 		_char.AddMovement(result);
 	}
 
