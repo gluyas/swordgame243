@@ -6,7 +6,8 @@ public class GameController : MonoBehaviour
 {
 	public GameObject Spawner;
 
-	public float SpawnRadius;
+	public float SpawnRadiusMin;
+	public float SpawnRadiusMax;
 	public float SpawnTimeInitial;
 	public float SpawnTimeIncrement;
 
@@ -25,7 +26,7 @@ public class GameController : MonoBehaviour
 		if (_nextSpawn <= 0)
 		{
 			var spawnRotation = Quaternion.AngleAxis(Random.Range(0, 360), Vector3.up);
-			var spawnVector = Vector3.forward * Random.Range(0, SpawnRadius);
+			var spawnVector = Vector3.forward * Random.Range(SpawnRadiusMin, SpawnRadiusMax);
 
 			Instantiate(Spawner).GetComponent<Spawner>().Init(spawnRotation * spawnVector);
 			_spawnTime *= SpawnTimeIncrement;
