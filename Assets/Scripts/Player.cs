@@ -35,6 +35,8 @@ public class Player : MonoBehaviour
 	public float AmmoRegenMin;
 	public float AmmoRegenMaxPoint;
 
+	private bool _usingMouse = false;
+
 	public int Hp
 	{
 		get { return _char.Hp; }
@@ -62,7 +64,9 @@ public class Player : MonoBehaviour
 	}
 	
 	private void Update()
-	{	
+	{
+		if (Input.GetKeyDown(KeyCode.BackQuote)) _usingMouse = !_usingMouse;
+		
 		// MOVEMENT
 		_char.SetMovement(new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")));
 		
@@ -74,8 +78,8 @@ public class Player : MonoBehaviour
 		}
 		
 		// SHOOTING
-		{	
-			var aim = new Vector2(Input.GetAxis("AimX"), Input.GetAxis("AimY"));
+		{
+			var aim = GetAim();
 			if (Math.Abs(aim.magnitude) > AimDeadZone)	// set aim direction
 			{
 				_char.Facing = new Vector3(aim.x, 0, aim.y).normalized;
@@ -120,6 +124,30 @@ public class Player : MonoBehaviour
 		}
 	}
 
+	private Vector2 GetAim()
+	{
+		if (_usingMouse)
+		{
+			var mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+			var playerPlane = new Plane(Vector3.up, transform.position);
+			
+			float distance;
+			if (playerPlane.Raycast(mouseRay, out distance))
+			{
+				var aim = mouseRay.GetPoint(distance) - transform.position;
+				return new Vector2(aim.x, aim.z);
+			}
+			else
+			{
+				return Vector2.zero;
+			}
+		}
+		else
+		{
+			return new Vector2(Input.GetAxis("AimX"), Input.GetAxis("AimY"));
+		}
+	}
+	
 	private void Kill()
 	{
 		_char.SetMovement(Vector3.zero);		
