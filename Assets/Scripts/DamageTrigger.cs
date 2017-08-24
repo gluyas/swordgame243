@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class DamageTrigger : MonoBehaviour
 {
 	public int Damage = 1;

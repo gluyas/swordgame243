@@ -20,6 +20,8 @@ public class Character : MonoBehaviour
 
 	private Vector3 _facing = Vector3.forward;
 
+	private bool _dead = false;
+
 	private void Start()
 	{
 		Hp = MaxHp;
@@ -64,9 +66,10 @@ public class Character : MonoBehaviour
 	{
 		Hp -= damage;
 		OnDamage.Invoke();
-		if (Hp <= 0)
+		if (Hp <= 0 && !_dead)
 		{
 			OnDeath.Invoke();
+			_dead = true;
 		}
 	}
 	

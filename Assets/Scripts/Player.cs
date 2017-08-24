@@ -56,7 +56,7 @@ public class Player : MonoBehaviour
 	{
 		Instance = this;
 		_char = GetComponent<Character>();
-		_char.OnDeath.AddListener(() => this.gameObject.SetActive(false));
+		_char.OnDeath.AddListener(Kill);
 		_char.OnDamage.AddListener(() => SoundDamage.Play());
 		AmmoRaw = AmmoMax;
 	}
@@ -118,6 +118,13 @@ public class Player : MonoBehaviour
 				if (!_burstFired) SoundRapid.Play();
 			}
 		}
+	}
+
+	private void Kill()
+	{
+		_char.SetMovement(Vector3.zero);		
+		this.enabled = false;
+		GetComponent<Collider>().enabled = false;
 	}
 	
 	private void OnDestroy()
