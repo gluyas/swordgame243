@@ -35,8 +35,6 @@ public class Player : MonoBehaviour
 	public float AmmoRegenMin;
 	public float AmmoRegenMaxPoint;
 
-	private bool _usingMouse = false;
-
 	public int Hp
 	{
 		get { return _char.Hp; }
@@ -64,9 +62,7 @@ public class Player : MonoBehaviour
 	}
 	
 	private void Update()
-	{
-		if (Input.GetKeyDown(KeyCode.BackQuote)) _usingMouse = !_usingMouse;
-		
+	{		
 		// MOVEMENT
 		_char.SetMovement(new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")));
 		
@@ -126,7 +122,7 @@ public class Player : MonoBehaviour
 
 	private Vector2 GetAim()
 	{
-		if (_usingMouse)
+		if (Ui.UsingMouse)
 		{
 			var mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 			var playerPlane = new Plane(Vector3.up, transform.position);
